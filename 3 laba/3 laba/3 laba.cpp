@@ -7,6 +7,8 @@
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
 #include "pipeline3.h"
+#include "Camera.h"
+
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
 
@@ -15,6 +17,7 @@ using namespace glm;
 GLuint VBO;
 GLuint IBO;
 GLuint gWorldLocation;
+Camera GameCamera;
 
 //вершинный шейдер
 static const char* pVS = "                                                          \n\
@@ -60,9 +63,10 @@ void RenderSceneCB()
 
 	vec3 CameraPos(0.1f, 0.15f, -3.0f); //позиция камеры
 	vec3 CameraTarget(0.02f, 0.0f, 1.0f); //направление камеры
-	vec3 CameraUp(0.0f, 1.0f, 0.0f); //ось вверх
+	vec3 CameraUp(0.0f, 1.0f, 0.0f); //верхний вектор
 
-	p.SetCamera(CameraPos, CameraTarget, CameraUp); //установка камеры
+	//p.SetCamera(CameraPos, CameraTarget, CameraUp); //установка камеры
+	p.SetCamera(GameCamera.GetPos(), GameCamera.GetTarget(), GameCamera.GetUp());
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
@@ -78,10 +82,15 @@ void RenderSceneCB()
 	glutSwapBuffers();
 }
 
+static void SpecialKeyboardCB(int Key, int x, int y) {
+	GameCamera.OnKeyboard(Key);
+}
+
 static void InitializeGlutCallbacks()
 {
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
+	glutSpecialFunc(SpecialKeyboardCB);
 }
 
 static void CreateVertexBuffer()

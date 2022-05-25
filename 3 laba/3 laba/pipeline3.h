@@ -48,7 +48,7 @@ public:
 	{
 		m_camera.Pos = Pos; //позиция камеры
 		m_camera.Target = Target; //направление камеры
-		m_camera.Up = Up; //ось вверх
+		m_camera.Up = Up; //верхний вектор
 	}
 
 	void InitCameraTransform(mat4& m, const vec3& Target, const vec3& Up)
