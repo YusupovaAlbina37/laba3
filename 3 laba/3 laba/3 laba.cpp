@@ -17,7 +17,8 @@ using namespace glm;
 GLuint VBO;
 GLuint IBO;
 GLuint gWorldLocation;
-Camera GameCamera;
+//Camera GameCamera;
+Camera* pGameCamera = NULL;
 
 //вершинный шейдер
 static const char* pVS = "                                                          \n\
@@ -50,6 +51,8 @@ void main()                                                                     
 
 void RenderSceneCB()
 {
+	pGameCamera->OnRender();
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	static float Scale = 0.0f;
@@ -58,15 +61,9 @@ void RenderSceneCB()
 
 	Pipeline p;
 	//p.Rotate(0.0f, Scale, 0.0f);
-	p.WorldPos(0.0f, 0.0f, 5.0f);
-	p.SetPerspectiveProj(30.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 1000.0f);
-
-	vec3 CameraPos(0.1f, 0.15f, -3.0f); //позиция камеры
-	vec3 CameraTarget(0.02f, 0.0f, 1.0f); //направление камеры
-	vec3 CameraUp(0.0f, 1.0f, 0.0f); //верхний вектор
-
-	//p.SetCamera(CameraPos, CameraTarget, CameraUp); //установка камеры
-	p.SetCamera(GameCamera.GetPos(), GameCamera.GetTarget(), GameCamera.GetUp());
+	p.WorldPos(0.0f, 0.0f, 3.0f);
+	p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
+	p.SetPerspectiveProj(60.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 100.0f);
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
@@ -82,8 +79,22 @@ void RenderSceneCB()
 	glutSwapBuffers();
 }
 
-static void SpecialKeyboardCB(int Key, int x, int y) {
-	GameCamera.OnKeyboard(Key);
+static void SpecialKeyboardCB(int Key, int x, int y) 
+{
+	pGameCamera->OnKeyboard(Key);
+}
+
+static void KeyboardCB(unsigned char Key, int x, int y)
+{
+	switch (Key) {
+	case 'q':
+		exit(0);
+	}
+}
+
+static void PassiveMouseCB(int x, int y)
+{
+	pGameCamera->OnMouse(x, y);
 }
 
 static void InitializeGlutCallbacks()
@@ -91,6 +102,8 @@ static void InitializeGlutCallbacks()
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
 	glutSpecialFunc(SpecialKeyboardCB);
+	glutPassiveMotionFunc(PassiveMouseCB);
+	glutKeyboardFunc(KeyboardCB);
 }
 
 static void CreateVertexBuffer()
@@ -193,9 +206,13 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Tutorial 13");
+	glutCreateWindow("Tutorial 15");
+	glutGameModeString("1280x1024@32");
+	glutEnterGameMode();
 
 	InitializeGlutCallbacks();
+
+	pGameCamera = new Camera(WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
 
 	GLenum res = glewInit();
 	if (res != GLEW_OK)

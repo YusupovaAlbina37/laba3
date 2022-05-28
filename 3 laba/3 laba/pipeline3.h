@@ -54,10 +54,11 @@ public:
 	void InitCameraTransform(mat4& m, const vec3& Target, const vec3& Up)
 	{
 		vec3 N = Target;
-		normalize(N);
+		N=normalize(N);
 		vec3 U = Up;
-		normalize(U);
-		U = cross(U, Target);
+		U=normalize(U);
+		//U = cross(U, Target);
+		U = cross(U, N);
 		vec3 V = cross(N,U); //отзеркаливание
 
 		m[0][0] = U.x; m[0][1] = U.y; m[0][2] = U.z; m[0][3] = 0.0f;
@@ -91,7 +92,7 @@ private:
 	struct {
 		vec3 Pos; //позиция камеры
 		vec3 Target; //направление камеры
-		vec3 Up; //ось вверх
+		vec3 Up; //верхний вектор
 	} m_camera;
 
 	mat4 m_transformation;

@@ -71,7 +71,7 @@ const mat4* Pipeline::GetTrans()
 	InitCameraTransform(CameraRotateTrans, m_camera.Target, m_camera.Up); 
 	InitPerspectiveProj(PersProjTrans);
 
-	m_transformation = CameraRotateTrans * CameraTranslationTrans * TranslationTrans * RotateTrans * ScaleTrans * PersProjTrans;
+	m_transformation = CameraRotateTrans* CameraTranslationTrans * TranslationTrans * RotateTrans * ScaleTrans  * PersProjTrans;
 
 
 
