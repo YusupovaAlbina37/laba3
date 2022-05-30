@@ -186,7 +186,8 @@ void Camera::Update() //функция обновляет значения векторов направления и вверх 
 	const vec3 Vaxis(0.0f, 1.0f, 0.0f);//вертикальная ось
 
 	vec3 View(1.0f, 0.0f, 0.0f); //вектор обзора
-	
+	//View.Rotate(m_AngleH, Vaxis);
+	//vec3 rotate(const vec3 &View, const int m_AngleH, const vec3 &Vaxis);
 	View = rotate(View, radians(m_AngleH), Vaxis);
 	normalize(View);
 
